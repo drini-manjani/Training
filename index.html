@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Training">
+<meta name="theme-color" content="#F1F2ED">
+<title>Training programme, 4 Sep 2026 to 31 Mar 2027</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1F2ED; --ink:#1A222B; --muted:#646C74; --rule:#D3D6D0;
+  --board:#1E5B48; --board-soft:#E4EEE9; --chalk:#F2D06B; --chalk-soft:#FBF5E1;
+  --game:#A7343F; --game-soft:#F6E6E7; --white:#FFFFFF;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper);color:var(--ink);font-family:Barlow,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input{font:inherit}
+.app{max-width:640px;margin:0 auto;padding:14px 18px 40px}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:22px}
+.top .who{font-size:13px;color:var(--muted)}
+.top .tools{display:flex;gap:8px;align-items:center}
+.pick{border:1.5px solid var(--rule);background:var(--white);border-radius:8px;padding:6px 8px;font-size:13px;color:var(--ink)}
+.link{background:none;border:0;padding:6px 4px;color:var(--board);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* hero */
+.hero{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.hero .phase{font-size:14px;color:var(--muted);margin-bottom:2px}
+.hero .wday{font-size:15px;font-weight:500}
+.hero h1{font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:700;font-size:clamp(56px,16vw,88px);line-height:.92;margin:0;letter-spacing:-.5px}
+.hero h1 small{font-size:.42em;font-weight:500;color:var(--muted);margin-left:4px;letter-spacing:0}
+.chip{display:inline-block;font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:600;font-size:20px;padding:6px 12px 5px;border-radius:6px;background:var(--board);color:#fff;white-space:nowrap;margin-bottom:8px}
+.chip.game{background:var(--game)}
+.chip.off{background:#fff;color:var(--muted);border:1.5px solid var(--rule)}
+.chip.travel{background:var(--chalk);color:var(--ink)}
+
+/* week strip */
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin:20px 0 20px}
+.wd{background:none;border:0;padding:8px 0 5px;border-radius:7px;color:var(--ink);cursor:pointer;text-align:center;border-bottom:3px solid transparent}
+.wd .l{display:block;font-size:11px;color:var(--muted)}
+.wd .n{display:block;font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:600;font-size:22px;line-height:1.1}
+.wd .t{display:block;font-size:11px;color:var(--muted);margin-top:2px;white-space:nowrap}
+.wd.game .t{color:var(--game);font-weight:600}
+.wd.today{border-bottom-color:var(--chalk)}
+.wd.sel{background:var(--board);color:#fff}
+.wd.sel .l,.wd.sel .t{color:rgba(255,255,255,.8)}
+.wd.sel.game .t{color:#fff}
+.wd:focus-visible,.btn:focus-visible,.link:focus-visible,.pick:focus-visible,input:focus-visible{outline:3px solid var(--chalk);outline-offset:2px}
+
+/* card */
+.card{background:var(--white);border-radius:12px;padding:18px 18px 10px;border-top:6px solid var(--board)}
+.card.game{border-top-color:var(--game)}
+.card.off{border-top-color:var(--rule)}
+.card.travel{border-top-color:var(--chalk)}
+.card h2{font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:600;font-size:32px;line-height:1;margin:0 0 6px}
+.meta{color:var(--muted);font-size:14px;margin-bottom:12px}
+.block{border-top:1px solid var(--rule);padding:12px 0 8px}
+.block h3,.block summary{font-size:14px;font-weight:600;color:var(--muted);margin:0 0 6px}
+details.block summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+details.block summary::-webkit-details-marker{display:none}
+details.block summary::after{content:"show";font-weight:500}
+details.block[open] summary::after{content:"hide"}
+.row{display:grid;grid-template-columns:1fr auto;gap:0 14px;padding:8px 0}
+.row+.row{border-top:1px dashed var(--rule)}
+.ex{font-weight:500}
+.rx{text-align:right;white-space:nowrap;font-family:"Barlow Condensed",Barlow,sans-serif;font-size:21px;font-weight:600;line-height:1.05}
+.ld{text-align:right;color:var(--board);font-weight:600;font-size:14px;white-space:nowrap}
+.nt{grid-column:1/-1;color:var(--muted);font-size:14px;margin-top:2px}
+.notes{margin:12px 0 8px;padding:10px 14px;border-left:4px solid var(--chalk);background:var(--chalk-soft);border-radius:0 8px 8px 0;font-size:15px}
+.notes p{margin:0}.notes p+p{margin-top:6px}
+.gameline{font-size:18px;margin:4px 0 10px}
+.gameline b{font-family:"Barlow Condensed",Barlow,sans-serif;font-size:26px;font-weight:600;display:block;line-height:1.1}
+.missed{color:var(--game);font-weight:600}
+
+/* log */
+.log{margin-top:16px;background:var(--board-soft);border-radius:12px;padding:14px 16px}
+.log h3{margin:0 0 8px;font-size:15px;font-weight:600}
+.log .fields{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.log label{font-size:12px;color:var(--muted);display:block}
+.log input{width:100%;border:1.5px solid var(--rule);border-radius:8px;padding:8px;background:#fff;color:var(--ink)}
+.log .actions{display:flex;align-items:center;gap:12px;margin-top:10px}
+.log .status{font-size:13px;color:var(--muted)}
+
+/* nav */
+.nav{position:sticky;bottom:0;display:grid;grid-template-columns:1fr auto 1fr;gap:8px;padding:14px 0 6px;margin-top:14px;background:linear-gradient(to bottom,rgba(241,242,237,0),var(--paper) 40%)}
+.btn{font-weight:600;border:1.5px solid var(--ink);background:#fff;color:var(--ink);border-radius:9px;padding:11px 14px;cursor:pointer}
+.btn.primary{background:var(--ink);color:#fff}
+.btn:disabled{opacity:.35;cursor:default}
+
+/* plan overlay */
+.overlay{position:fixed;inset:0;background:var(--paper);overflow:auto;display:none;z-index:10}
+.overlay.open{display:block}
+.overlay .inner{max-width:640px;margin:0 auto;padding:14px 18px 60px}
+.overlay .bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.overlay h1{font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:700;font-size:40px;margin:6px 0 14px;line-height:1}
+.overlay h2{font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:600;font-size:26px;margin:26px 0 8px}
+.overlay p,.overlay li{font-size:15px}
+.overlay ol,.overlay ul{padding-left:20px;margin:6px 0}
+.overlay li+li{margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-weight:600;color:var(--muted)}
+td.d{white-space:nowrap}
+.tiny{font-size:13px;color:var(--muted)}
+@media (max-width:400px){.log .fields{grid-template-columns:1fr 1fr}}
+@media (prefers-reduced-motion:no-preference){.card{transition:opacity .15s}.card.swap{opacity:.4}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="who" id="who"></div>
+    <div class="tools">
+      <input class="pick" type="date" id="datePick" min="2026-09-04" max="2027-03-31" aria-label="Go to a date"><button class="link" id="goBtn">Go</button>
+      <button class="link" id="planBtn">Plan</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div>
+      <div class="phase" id="phaseLine"></div>
+      <div class="wday" id="wdayLine"></div>
+      <h1 id="dateLine"></h1>
+    </div>
+    <div id="chip"></div>
+  </div>
+
+  <div class="week" id="week"></div>
+
+  <div id="card"></div>
+
+  <div class="log" id="log">
+    <h3>Log the two numbers that matter (and bodyweight)</h3>
+    <div class="fields">
+      <div><label for="chalk">Chalk mark, cm over rim</label><input id="chalk" type="number" step="0.5" inputmode="decimal"></div>
+      <div><label for="squat">Squat top set, kg</label><input id="squat" type="number" step="2.5" inputmode="decimal"></div>
+      <div><label for="bw">Bodyweight, kg</label><input id="bw" type="number" step="0.1" inputmode="decimal"></div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="saveBtn">Save</button>
+      <span class="status" id="logStatus"></span>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="btn" id="prevBtn">Previous day</button>
+    <button class="btn primary" id="todayBtn">Today</button>
+    <button class="btn" id="nextBtn">Next day</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="inner">
+    <div class="bar"><span class="tiny">4 Sep 2026 to 31 Mar 2027</span><button class="btn" id="closePlan">Back to today</button></div>
+    <h1>The plan</h1>
+    <p>Weekly rhythm all season: Tuesday strength, Wednesday power, Thursday basketball, Friday primer, Sunday game. Friday only becomes a real session on weekends without a game. Nothing on Saturdays. Missed a day? It is gone. Open the app tomorrow and do tomorrow.</p>
+
+    <h2>Season map</h2>
+    <table>
+      <tr><th>Phase</th><th>Dates</th><th>What it is for</th></tr>
+      <tr><td>Finish the jump programme</td><td class="d">4 – 27 Sep</td><td>Intensification weeks 6–7, taper week 8, chalk-mark test on 21 Sep, opener on the 27th.</td></tr>
+      <tr><td>Málaga</td><td class="d">28 Sep – 5 Oct</td><td>Retain: two sprint sessions and two 10-minute bodyweight blocks. You miss the 4 Oct game.</td></tr>
+      <tr><td>Maintenance 1</td><td class="d">6 Oct – 8 Nov</td><td>Hold jump and strength through 4 games in 5 weeks. Cut ends around 89 kg, late October.</td></tr>
+      <tr><td>Vacation</td><td class="d">9 – 20 Nov</td><td>Retain: sprints and bodyweight. Nothing hard from the 19th, you play the 22nd.</td></tr>
+      <tr><td>Maintenance 2</td><td class="d">21 Nov – 20 Dec</td><td>Hold, slightly more strength volume. Free weekend 14–20 Dec gets a heavy Friday.</td></tr>
+      <tr><td>Albania</td><td class="d">21 Dec – 6 Jan</td><td>17 days is past the 2-week retention window: sprints and bodyweight twice a week each, plus one gym squat session a week if you can find a gym.</td></tr>
+      <tr><td>Strength block</td><td class="d">7 Jan – 31 Mar</td><td>Three 4-week squat waves (75% / 80% / 85% / deload), each 2.5 kg heavier, ending with a chalk-mark re-test on 29 Mar and a squat 3RM on 30 Mar. Next game after that: 10 Apr away at Contern.</td></tr>
+    </table>
+    <p class="tiny">Game dates after 8 Nov are the FLBB fixture moved to the Sunday, as you asked. Check kick-off times as they get confirmed.</p>
+
+    <h2>Rules that override the calendar</h2>
+    <ol>
+      <li><b>Shins first.</b> Any tibial pain that lasts past the warm-up: drop that week's plyos, keep the strength session, keep tibialis. Two flare-ups in a row: replace depth jumps with box jumps (step down) for the rest of the block.</li>
+      <li><b>Never hard the day before a game.</b> Friday is a primer on game weeks. If you played a midweek friendly or extra run, Friday is tibialis only.</li>
+      <li><b>Intensity stays, volume flexes.</b> Short on time or energy: cut sets, not kilos.</li>
+      <li><b>Track two numbers only:</b> the Wednesday (or Thursday) approach-jump chalk mark and the Tuesday squat top set. If the chalk mark drops 3 cm or more two weeks running, the next week is a deload at 70% whatever the table says.</li>
+      <li><b>Tuesday shooting</b> is fine after the strength session, not before it.</li>
+      <li><b>Every barbell rep:</b> 2–3 s controlled down, then drive up as fast as you possibly can. Never bounce out of the bottom. If you hit RIR 0, repeat that weight next time rather than adding.</li>
+      <li><b>Landings are silent.</b> Box jumps: always step down, never jump down. Depth jumps: step off the low box, land, explode onto the tall box, never rebound off the floor.</li>
+    </ol>
+
+    <h2>Bodyweight</h2>
+    <p>94 kg at the start of the programme, 93.5 on 27 Aug, 92.5 on 4 Sep. Keep the cut at about 0.5 kg a week until ~89 kg (expected late October), then hold at maintenance calories for the rest of the season. The January–March strength block does not work in a deficit. Protein 1.8–2 g per kg throughout; carbs around training stay.</p>
+
+    <h2>Why it is built this way</h2>
+    <ul>
+      <li>Strength plus plyometrics beats either alone. Every phase keeps one strength and one jump stimulus a week, never just one.</li>
+      <li>In basketball players, session frequency and programme length do not change the benefit of plyometrics, so low-frequency in-season plyos still work.</li>
+      <li>Strength is maintained for months with one session a week at 80–85% and a third of the volume, as long as the load stays heavy. One session every two weeks is not enough, which is why Albania gets a gym session if possible.</li>
+      <li>Plyometric jump gains are fully retained after two weeks of no jumping; long steady running is the one thing that erodes jump power, sprints do not. So trips are sprints only.</li>
+      <li>Depth jumps done box-to-box with a full-amortisation landing transfer best to countermovement jump height, and they are what your shins can tolerate.</li>
+    </ul>
+
+    <h2>Your maxes</h2>
+    <p>Every percentage-based load in the plan is calculated from these two numbers. When a top set has been easy two weeks running, or after a test, I will tell you the new figure to enter here and every session from that day forward recalculates. The September weeks of the jump programme are fixed and do not change.</p>
+    <div class="log" style="margin-top:8px">
+      <div class="fields" style="grid-template-columns:1fr 1fr">
+        <div><label for="s1rm">Squat 1RM, kg</label><input id="s1rm" type="number" step="2.5" inputmode="decimal"></div>
+        <div><label for="d1rm">Deadlift 1RM, kg</label><input id="d1rm" type="number" step="2.5" inputmode="decimal"></div>
+      </div>
+      <div class="actions"><button class="btn" id="saveMax">Update loads</button><span class="status" id="maxStatus"></span></div>
+    </div>
+
+    <h2>Your log</h2>
+    <div id="logList" class="tiny">Nothing saved yet.</div>
+    <div class="actions" style="margin-top:10px;display:flex;gap:12px;align-items:center"><button class="btn" id="copyLog">Copy log as text</button><span class="status tiny" id="copyStatus"></span></div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+// ---------- dates ----------
+const D=(y,m,d)=>new Date(y,m-1,d);
+const key=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const addDays=(d,n)=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x;};
+const parse=s=>{const p=s.split('-').map(Number);return D(p[0],p[1],p[2]);};
+const START=D(2026,9,4), END=D(2027,3,31);
+const WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const WDS=['S','M','T','W','T','F','S'];
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const PHASES=[
+ {id:'A',name:'Finish the jump programme',from:D(2026,9,4),to:D(2026,9,27)},
+ {id:'B',name:'Málaga',from:D(2026,9,28),to:D(2026,10,5)},
+ {id:'C',name:'Maintenance block 1',from:D(2026,10,6),to:D(2026,11,8)},
+ {id:'D',name:'Vacation',from:D(2026,11,9),to:D(2026,11,20)},
+ {id:'E',name:'Maintenance block 2',from:D(2026,11,21),to:D(2026,12,20)},
+ {id:'F',name:'Albania',from:D(2026,12,21),to:D(2027,1,6)},
+ {id:'G',name:'In-season strength block',from:D(2027,1,7),to:D(2027,3,31)},
+];
+const phaseOf=d=>PHASES.find(p=>d>=p.from&&d<=p.to)||PHASES[PHASES.length-1];
+
+// ---------- games (Sundays) ----------
+const GAMES={
+ '2026-09-27':{opp:'Racing Luxembourg C',ha:'Home',time:'19h30',venue:'Tramsschapp',note:'Season opener and the result of the jump programme. A derby against your own club. Warm up longer than usual, then play.'},
+ '2026-10-04':{opp:'Basket Esch C',ha:'Away',time:'18h30',venue:'Esch',missed:true,note:'You are in Málaga. Tell the coach early, not the week of.'},
+ '2026-10-11':{opp:'Gréngewald Hueschtert B',ha:'Away',time:'16h30',venue:'Oberanven'},
+ '2026-10-18':{opp:'Arantia Larochette B',ha:'Home',time:'19h30',venue:'Tramsschapp'},
+ '2026-10-25':{opp:'BC Mess B',ha:'Away',time:'18h00',venue:'Mondercange'},
+ '2026-11-08':{opp:'Sparta Bertrange B',ha:'Home',time:'19h30',venue:'Tramsschapp'},
+ '2026-11-22':{opp:'Basket Esch B',ha:'Away',time:'time tbd',venue:'Esch',note:'Two days after you land. Nothing hard since Thursday, so you arrive fresh.'},
+ '2026-11-29':{opp:'AB Contern B',ha:'Home',time:'time tbd',venue:'Tramsschapp'},
+ '2026-12-06':{opp:'Musel Pikes B',ha:'Away',time:'time tbd',venue:''},
+ '2026-12-13':{opp:'US Heffingen B',ha:'Home',time:'time tbd',venue:'Tramsschapp'},
+ '2027-01-10':{opp:'Mamer',ha:'Away',time:'time tbd',venue:'',note:'Four days after Albania. You did a fast goblet squat and tibialis on Friday, nothing else. Legs will feel light.'},
+ '2027-01-17':{opp:'Racing Luxembourg C',ha:'Away',time:'time tbd',venue:''},
+ '2027-01-31':{opp:'Basket Esch C',ha:'Home',time:'time tbd',venue:'Tramsschapp'},
+ '2027-02-07':{opp:'Gréngewald Hueschtert B',ha:'Home',time:'time tbd',venue:'Tramsschapp'},
+ '2027-02-21':{opp:'Arantia Larochette B',ha:'Away',time:'time tbd',venue:''},
+ '2027-02-28':{opp:'BC Mess B',ha:'Home',time:'time tbd',venue:'Tramsschapp'},
+ '2027-03-07':{opp:'Sparta Bertrange B',ha:'Away',time:'time tbd',venue:''},
+ '2027-03-21':{opp:'Basket Esch B',ha:'Home',time:'time tbd',venue:'Tramsschapp'},
+};
+
+// ---------- maxes (adjustable in the Plan page) ----------
+const MAX={s:90,d:105};
+const r25=x=>Math.round(x/2.5)*2.5;
+const sq=(p,add)=>r25(MAX.s*p)+(add||0);
+const dl=p=>r25(MAX.d*p);
+const pctL=p=>Math.round(p*100)+'%';
+
+// ---------- reusable blocks ----------
+const WARMUP={title:'Warm-up, 8 min',collapsed:true,rows:[
+ ['Easy walk or jog','3–4 min','','Treadmill is fine. No weighted vest, ever.'],
+ ['Ankle dorsiflexion mobility','8 per side','',''],
+ ['Tibialis raises','1×20','','Never skip.'],
+ ['Calf raises','1×15','',''],
+ ['Glute bridge or banded walk','20','',''],
+ ['Pogo hops in place','2×10','','Quiet feet.'],
+]};
+const TIB=['Tibialis raise','3×15','','Shin resilience.'];
+
+// ---------- session builders ----------
+const S={};
+S.off=(note)=>({type:'off',title:'Off',meta:'Rest is part of the plan.',notes:note?[note]:[]});
+S.travel=(title,note)=>({type:'travel',title:title,meta:'Travel day',notes:note?[note]:[]});
+S.game=(g)=>({type:'game',title:g.missed?'Game (missed)':'Game',game:g,notes:g.note?[g.note]:['Mobilise 10 minutes before the team warm-up, tibialis 1×20, then play. Nothing else today.']});
+S.recovery=(note)=>({type:'recovery',title:'Recovery',meta:'Home, 15–20 min',blocks:[{title:'Do all of it',rows:[
+ ['Tibialis raises','3×20','',''],
+ ['Single-leg calf raises','3×15 per leg','','Off a step, bent knee on the last set.'],
+ ['Hip and ankle mobility','10 min','','Hip flexor, adductor, ankle dorsiflexion.'],
+ ['Easy run or shooting','20 min','optional','Easy means easy.'],
+]}],notes:note?[note]:[]});
+
+// Phase A (original 8-week jump programme, intensification and taper)
+S.strengthA=(kg,label,note)=>({type:'strength',title:'Strength A, squat focus',meta:label+'. Home gym, about 40 min',blocks:[WARMUP,{title:'Main work',rows:[
+ ['Box jump','4×3','','Max intent, step down, silent landing.'],
+ ['Back squat','4×3',kg+' kg','RIR 1–2. 2–3 s down, drive up as fast as you can. Hit RIR 0: repeat this weight next time.'],
+ ['Hang clean or barbell high-pull','5×3','start '+sq(0.5)+' kg','Bar speed is the point, not the load. Add weight only while it still moves fast.'],
+ ['Rear-foot-elevated split squat','3×6 per leg','start '+sq(0.4)+' kg, RIR 2','Bar on the back. Controlled down, fast up, stay tight. All reps clean at RIR 2 or more: add 2.5 kg next time.'],
+ ['Standing calf raise, bar in rack','3×8','start '+sq(0.7)+' kg','Pause at the bottom. Go up 5 kg when all 24 reps are clean; the arches decide, not the ego.'],
+ TIB,
+]}],notes:note?[note]:[]});
+S.strengthB=(kg,label,note)=>({type:'strength',title:'Strength B, hinge focus',meta:label+'. Home gym, about 40 min',blocks:[WARMUP,{title:'Main work',rows:[
+ ['Box jump','3×3','','Keep it crisp, step down.'],
+ ['Deadlift','4×3',kg+' kg','RIR 1–2. Bar speed decides, not the number: if the third rep grinds, stay here next week.'],
+ ['Romanian deadlift','3×6','start '+dl(0.6)+' kg, RIR 3','Hamstrings and hip extension. Add 2.5 kg when all reps are clean.'],
+ ['Bulgarian split squat or step-up','3×8 per leg','start '+sq(0.35)+' kg, RIR 3','Bar on the back or a dumbbell in each hand. Add 2.5 kg when all reps are clean.'],
+ ['Single-leg calf raise, bent knee','3×10 per leg','','Off a step. Bent knee loads the soleus, which does the shin work.'],
+ TIB,
+]}],notes:note?[note]:[]});
+S.plyoLight=()=>({type:'plyo',title:'Plyometrics, first depth-jump session',meta:'Week 6. Home gym, about 25 min, roughly 30 contacts',blocks:[WARMUP,{title:'Full rest between every rep',rows:[
+ ['Pogo hops','2×8','','Ankle stiffness primer.'],
+ ['Box jump, max intent','3×3','','Step down every rep.'],
+ ['Depth jump, box to box','3×3','30 cm box in, 50–60 cm box out','Step off the low box, land quietly with a full bend, then explode onto the tall box about 1.5 m away. 45–60 s rest between reps. Stop the set the moment a jump loses snap.'],
+ ['Tibialis and calf raise','2×15 each','',''],
+]}],notes:['Depth jumps are the highest-impact thing in the programme, which is why they only arrive now and only 3×3. The shins get the final say: any tibial pain past warm-up, skip the depth jumps and do the box jumps only.','Approach jumps are on Thursday at the court, before practice, not here. The home ceiling caps them.']});
+S.plyoFull=()=>({type:'plyo',title:'Plyometrics, full session',meta:'Week 7, last hard week. Home gym, about 30 min, cap about 40 contacts (depth jumps count double)',blocks:[WARMUP,{title:'Full rest between every rep',rows:[
+ ['Pogo hops','2×8','',''],
+ ['Box jump, max intent','4×3','','Step down.'],
+ ['Depth jump, box to box','3×3','30 cm in, 50–60 cm out','Same rule as last week: quiet landing, full bend, explode up. Stop when the snap goes.'],
+ ['Lateral skater bound','2×4 per leg','','Stick each landing for a count of one before the next.'],
+ ['Tibialis and calf raise','2×15 each','',''],
+]}],notes:['This is the last plyo session of the programme. Quality over everything; junk reps only add impact.']});
+S.basketballA=(note)=>({type:'basketball',title:'Basketball',meta:'Team practice',blocks:[{title:'Before practice, fresh',rows:[
+ ['Approach jumps at the rim','6–8 total','','Full run-up, real rim, chalk or note the best one. Full rest between each. This is the skill and the measurement.'],
+]}],notes:note?[note]:['Play normally. If the shins are talking, play but skip the approach jumps.']});
+S.test=(title,meta,rows,notes)=>({type:'test',title:title,meta:meta,blocks:[WARMUP,{title:'Fresh, full rest, then stop',rows:rows}],notes:notes});
+
+// Templates G / F (maintenance)
+S.strengthG=(sr,kg,pct,note)=>({type:'strength',title:'Strength',meta:'Home gym, about 35 min',blocks:[WARMUP,{title:'Main work',rows:[
+ ['Back squat',sr,kg+' kg ('+pct+')','2–3 s down, max intent up. This is the load that keeps the 1RM. Do not lower it to make the session easier.'],
+ ['Bulgarian split squat','2×5 per leg','start '+sq(0.45)+' kg, RIR 2','Bar on the back. Add 2.5 kg when all reps are clean.'],
+ ['Romanian deadlift','2×5','start '+dl(0.65)+' kg, RIR 2','Add 2.5 kg when all reps are clean.'],
+ ['Tibialis raise','2×20','',''],
+]}],notes:note?[note,'Shooting after this, not before.']:['Shooting after this, not before.']});
+S.powerG=(extra)=>({type:'power',title:'Power',meta:'About 25 min, 15–20 contacts, 90 s or more between efforts',blocks:[WARMUP,{title:'Every rep at full intent',rows:[
+ ['Depth jump, box to box',extra?'4×3':'3×3','40 cm box in, tall box out','Step off, land with a full bend, explode onto the second box. Never rebound off the floor.'],
+ ['Approach jumps to the rim','4–5','','Chalk-marked. At the court if you can get there; at home replace with 4–5 max-intent box jumps and do the chalk mark Thursday before practice.'],
+ ['Hurdle hops','2×4','','Low hurdles, land and go.'],
+ ['Single-leg pogos','2×10 per leg','',''],
+]}],notes:[extra?'Free weekend this week, so one extra set of depth jumps.':'Depth jumps rebound onto the second box, never the floor. Shins flare: this is the session you drop, not Tuesday.']});
+S.basketball=(note)=>({type:'basketball',title:'Basketball',meta:'Team practice',notes:note?[note]:['If you did not get the chalk mark on Wednesday, take 4–5 approach jumps at the rim before the team warm-up, fresh, and note the best one.']});
+S.primer=(note)=>({type:'primer',title:'Primer',meta:'Game on Sunday. Home, about 25 min',blocks:[WARMUP,{title:'Sharp, not tiring',rows:[
+ ['Goblet squat or back squat','2×3 fast','about 60% ('+sq(0.6)+' kg on the bar)','Move it fast. Skip this and the box jumps if the legs feel heavy.'],
+ ['Box jump','4–6','','Step down.'],
+ ['Upper-body push and pull','3×8 each','bodyweight or light','Push-ups or press, plus a row. Not the point of the day.'],
+ ['Tibialis raise','2×20','',''],
+]}],notes:note?[note]:[]});
+S.heavyFri=(note)=>({type:'strength',title:'Strength, second session',meta:'No game this weekend, so Friday is a real session. Home, about 40 min',blocks:[WARMUP,{title:'Main work',rows:[
+ ['Back squat','4×4',sq(0.8)+' kg (80%)','2–3 s down, max intent up.'],
+ ['Rear-foot-elevated split squat','3×6 per leg','start '+sq(0.45)+' kg, RIR 2','Bar on the back. Add 2.5 kg when all reps are clean.'],
+ ['Romanian deadlift','3×6','start '+dl(0.62)+' kg, RIR 2','Add 2.5 kg when all reps are clean.'],
+ ['Nordic curl','3×4','','Lower as slowly as you can; push back up with the hands if needed.'],
+]}],notes:note?[note]:[]});
+S.tibOnly=(note)=>({type:'recovery',title:'Tibialis only',meta:'Home, 10 min',blocks:[{title:'That is all',rows:[['Tibialis raises','3×20','',''],['Single-leg calf raises','2×15 per leg','','']]}],notes:note?[note]:[]});
+
+// Template S (strength block)
+S.strengthS=(wave,sr,kg,pct,note)=>({type:'strength',title:'Strength, '+wave,meta:'Home gym, about 40 min',blocks:[WARMUP,{title:'Main work',rows:[
+ ['Back squat',sr,kg+' kg ('+pct+')','2–3 s down, max intent up. If the top set feels easy, the 1RM has moved: add 2.5 kg to the next wave, not reps to this one.'],
+ ['Rear-foot-elevated split squat','3×6 per leg','start '+sq(0.45)+' kg, RIR 2','Bar on the back. Add 2.5 kg when all reps are clean.'],
+ ['Romanian deadlift','3×6','start '+dl(0.62)+' kg, RIR 2','Add 2.5 kg when all reps are clean.'],
+ ['Tibialis raise','2×20','',''],
+]}],notes:note?[note,'Shooting after this, not before.']:['Shooting after this, not before.']});
+S.powerS=()=>({type:'power',title:'Power and contrast',meta:'About 25 min, full rest between efforts',blocks:[WARMUP,{title:'Every rep at full intent',rows:[
+ ['Jump squat with the bar (or trap-bar jump)','3×3','20–25 kg, about 20–30% of bodyweight','The 15 kg bar plus 2.5 or 5 kg a side. Land soft, reset every rep.'],
+ ['Depth jump, box to box','3×3','40 cm in, tall box out','Quiet landing, full bend, explode.'],
+ ['Approach jumps to the rim','4–5','','Chalk-marked. At home: max-intent box jumps instead, chalk mark on Thursday.'],
+ ['Pogo hops','2×10','',''],
+]}],notes:['Contrast pairs a loaded jump with an unloaded one. The loaded set primes the nervous system; the depth jumps that follow should feel springier than usual.']});
+S.heavyFriS=(note)=>({type:'strength',title:'Strength, second session',meta:'No game this weekend. Home, about 40 min',blocks:[WARMUP,{title:'Main work',rows:[
+ ['Front squat, or deadlift if you prefer','3×5','front squat about '+sq(0.65)+' kg, deadlift '+dl(0.75)+' kg (75%)','Controlled down, fast up.'],
+ ['Hip thrust','3×6','start '+sq(1.0)+' kg, RIR 2','Bar across the hips, pause at the top. This lift takes more than your squat; add 5 kg when all reps are clean.'],
+ ['Nordic curl','3×4','',''],
+]}],notes:note?[note]:[]});
+
+// Template R (travelling)
+S.sprints=(note)=>({type:'sprints',title:'Sprints',meta:'Outside, about 30 min including warm-up',blocks:[{title:'Warm-up, 10 min',rows:[['Easy jog, then leg swings, then 3 build-ups to 80%','10 min','','']]},{title:'Then',rows:[
+ ['Hill sprints','8 × 6–8 s','','Or 6 × 40 m flat from a 3-point stance if there is no hill. Walk back down, full recovery, no rushing.'],
+ ['Tibialis wall raise','2×20','','Standing with the back against a wall, lift the toes.'],
+]}],notes:note?[note]:['Sprints keep the jump; long steady running erodes it. So this, not a 10 km.']});
+S.bodyweight=(note)=>({type:'bodyweight',title:'Bodyweight strength',meta:'Anywhere, 10–12 min',blocks:[{title:'Straight through, minimal rest',rows:[
+ ['Bulgarian split squat','3×8 per leg','','Rear foot on a chair or step. 3 s down, fast up.'],
+ ['Single-leg Romanian deadlift','3×8 per leg','','Slow, balance, feel the hamstring.'],
+ ['Single-leg calf raise','3×15 per leg','','Off a step.'],
+ ['Tibialis wall raise','3×20','',''],
+ ['Pogo hops','3×15','','Quiet feet.'],
+]}],notes:note?[note]:[]});
+S.easyRun=()=>({type:'run',title:'Easy run, optional',meta:'20–30 min, never more',notes:['This is the only steady running in the whole plan and it is optional. Skip it if the legs feel flat.']});
+S.gymSquat=()=>({type:'strength',title:'Gym squat, if a gym is reachable',meta:'About 25 min. If there is no gym: off',blocks:[{title:'Warm up to it, then',rows:[
+ ['Back squat','3×3',sq(0.85)+' kg (85%)','This one session a week holds the 1RM through 17 days away. One every two weeks is not enough, one a week is.'],
+ ['Tibialis raise','2×20','',''],
+]}],notes:['No gym nearby: do nothing here, the bodyweight and sprint days carry the trip. Do not chase it.']});
+
+// ---------- explicit day-by-day (Phases A, B, D, F and the edges of G) ----------
+const O={};
+// Phase A
+O['2026-09-04']=S.strengthB(90,'Week 5','Shins: skip the box jumps today if they still feel it, keep everything with a bar. If you already did Strength B this week, do tibialis 3×20 and 10 minutes of mobility instead.');
+O['2026-09-05']=S.off(); O['2026-09-06']=S.off('Last free Sunday before depth jumps start tomorrow. Sleep.');
+O['2026-09-07']=S.plyoLight();
+O['2026-09-08']=S.strengthA(80,'Week 6','Week 6 load. Bar speed decides: if the third rep of a set grinds, stay at 80 next week.');
+O['2026-09-09']=S.off('Rest day. Light shooting belongs to Tuesday after lifting, not here.');
+O['2026-09-10']=S.basketballA();
+O['2026-09-11']=S.strengthB(92.5,'Week 6','Playing the Soleuvre friendly tomorrow? Then deadlift 3×3 at 85 kg and no box jumps, so you arrive with legs.');
+O['2026-09-12']={type:'game',title:'Friendly, optional',game:{opp:'Soleuvre',ha:'',time:'18h30',venue:'',friendly:true},notes:['Only if you want it. If you play, treat Sunday as full rest.']};
+O['2026-09-13']=S.off();
+O['2026-09-14']=S.plyoFull();
+O['2026-09-15']=S.strengthA(82.5,'Week 7, heaviest of the programme','This is the top of the block. After today the weight only comes down.');
+O['2026-09-16']=S.off('Rest day.');
+O['2026-09-17']=S.basketballA();
+O['2026-09-18']=S.strengthB(95,'Week 7','Last heavy lower-body session before the opener. From here everything is a taper.');
+O['2026-09-19']=S.off(); O['2026-09-20']=S.off();
+O['2026-09-21']=S.test('Chalk-mark test','Week 8, taper. About 25 min, at the court if possible, otherwise the same wall and mark as week 1',[
+ ['Approach jumps, fresh','5','','Full rest between each. Mark the best one. This number is the result of the 8-week programme, write it down.'],
+ ['Quality contacts after the test','8 total','','Box jumps or a few more approach jumps, then stop. Do not add anything.'],
+],['Volume this week drops to about 40%, intensity stays. The whole point is arriving at Sunday fresh.']);
+O['2026-09-22']={type:'strength',title:'Fast squats only',meta:'Week 8, taper. Home, 20 min',blocks:[WARMUP,{title:'Then',rows:[['Back squat','3×2','72.5 kg (80%)','As fast as the bar will move. Nothing else heavy today.'],['Tibialis raise','2×20','','']]}],notes:['A nervous-system touch, not a workout.']};
+O['2026-09-23']=S.off('Rest day. Nothing hard from now until the game.');
+O['2026-09-24']=S.basketball('Play light: shooting and rhythm, not full-tilt runs. No approach jumps today, you tested Monday.');
+O['2026-09-25']={type:'primer',title:'Primer',meta:'Home, 15 min',blocks:[{title:'That is all',rows:[['Box jump','4','','Step down.'],['Tibialis raise','2×20','','']]}],notes:['Two genuinely easy days now. Eat, sleep, hydrate.']};
+O['2026-09-26']=S.off('Day before the opener. Walk, stretch, early night.');
+// Phase B, Málaga
+O['2026-09-28']=S.travel('Travel to Málaga','Walk. That is the session.');
+O['2026-09-29']=S.sprints('Find a hill near the villa if there is one.');
+O['2026-09-30']=S.bodyweight();
+O['2026-10-01']=S.sprints();
+O['2026-10-02']=S.bodyweight();
+O['2026-10-03']=S.easyRun();
+O['2026-10-05']=S.travel('Travel home','Tibialis 3×20 and 10 minutes of mobility tonight if you have the energy. Tomorrow you lift.');
+// Phase D, vacation
+O['2026-11-09']=S.travel('Travel','Walk.');
+O['2026-11-10']=S.sprints();
+O['2026-11-11']=S.bodyweight();
+O['2026-11-12']=S.off();
+O['2026-11-13']=S.sprints();
+O['2026-11-14']=S.off();
+O['2026-11-15']=S.easyRun();
+O['2026-11-16']=S.bodyweight();
+O['2026-11-17']=S.sprints('Last sprint session of the trip.');
+O['2026-11-18']=S.bodyweight('Last session of the trip. Nothing hard from tomorrow: you land Friday and play Sunday.');
+O['2026-11-19']=S.off('Nothing hard from today until the game.');
+O['2026-11-20']=S.travel('Travel home','Walk, tibialis 2×20, sleep.');
+O['2026-11-21']=S.off('Day before the game.');
+// Phase F, Albania
+O['2026-12-21']=S.travel('Travel to Albania','Walk.');
+O['2026-12-22']=S.sprints();
+O['2026-12-23']=S.bodyweight();
+O['2026-12-24']=S.gymSquat();
+O['2026-12-25']=S.off('Christmas.');
+O['2026-12-26']=S.off(); O['2026-12-27']=S.easyRun();
+O['2026-12-28']=S.sprints();
+O['2026-12-29']=S.bodyweight();
+O['2026-12-30']=S.gymSquat();
+O['2026-12-31']=S.sprints('Last one of the year.');
+O['2027-01-01']=S.off('New Year.');
+O['2027-01-02']=S.off(); O['2027-01-03']=S.easyRun();
+O['2027-01-04']=S.bodyweight();
+O['2027-01-05']=S.sprints('Last session of the trip.');
+O['2027-01-06']=S.travel('Travel home','Tibialis and mobility tonight. Basketball tomorrow.');
+// Phase G edges
+O['2027-01-07']=S.basketball('First practice back. Play, and take 4–5 approach jumps before the team warm-up to see where the jump is after 17 days away.');
+O['2027-01-08']={type:'primer',title:'Primer, return week',meta:'Game on Sunday. Home, 15 min',blocks:[WARMUP,{title:'Then',rows:[['Goblet squat','2×3 fast','','Just wake the legs up.'],['Tibialis raise','2×20','','']]}],notes:['No heavy lifting this week. The first squat wave starts Tuesday.']};
+O['2027-01-09']=S.off();
+O['2027-03-29']=S.test('Chalk-mark re-test','End of season block. At the court, fresh',[
+ ['Approach jumps, fresh','5','','Mark the best one and compare with 21 September and week 1.'],
+],['This is the number the January–March block was for.']);
+O['2027-03-30']={type:'test',title:'Squat 3RM test',meta:'Home gym, about 30 min',blocks:[WARMUP,{title:'Build up in singles and doubles, then',rows:[['Back squat, 3 rep max','1×3','work up: '+sq(0.65)+', '+sq(0.78)+', '+sq(0.86)+', '+sq(0.92)+', then attempt','The target has been about 100 kg 1RM, which is roughly 92.5 for 3. Stop at the first grind.'],['Tibialis raise','2×20','','']]}],notes:['Two numbers from two days. Bring them to the chat and we plan April to June.']};
+O['2027-03-31']=S.off('Programme ends. Next game 10 April away at Contern; the April–June block starts from these two test numbers.');
+
+// ---------- template weeks (Monday key) ----------
+const W={
+ // Phase C
+ '2026-10-05':{tpl:'G',sr:'3×3',p:0.8,tue:'First lift in a week, so 80% not 85%.'},
+ '2026-10-12':{tpl:'G',sr:'3×3',p:0.83},
+ '2026-10-19':{tpl:'G',sr:'3×3',p:0.85},
+ '2026-10-26':{tpl:'F',sr:'3×3',p:0.85,tue:'You should be near 89 kg now. If so, the cut is over: maintenance calories from here.'},
+ '2026-11-02':{tpl:'G',sr:'3×3',p:0.85,fri:'tib',friNote:'Last week before the vacation. Nothing more than this.'},
+ // Phase E
+ '2026-11-23':{tpl:'G',sr:'3×3',p:0.8,tue:'First heavy lift in two weeks: 80% today, back to 85% next week.'},
+ '2026-11-30':{tpl:'G',sr:'3×3',p:0.85},
+ '2026-12-07':{tpl:'G',sr:'3×3',p:0.85},
+ '2026-12-14':{tpl:'F',sr:'3×3',p:0.85,tue:'Last full week before Albania. Make today and Friday both count.',friNote:'Last bar session until January (unless you find a gym in Albania).'},
+ // Phase G, three waves
+ '2027-01-11':{tpl:'S',wave:'wave 1 week 1',sr:'4×5',p:0.75,tue:'First wave. Lighter than the maintenance blocks on purpose: volume first.'},
+ '2027-01-18':{tpl:'S',wave:'wave 1 week 2',sr:'4×4',p:0.8,fri:'heavy'},
+ '2027-01-25':{tpl:'S',wave:'wave 1 week 3',sr:'4×3',p:0.85},
+ '2027-02-01':{tpl:'S',wave:'wave 1 deload',sr:'3×3',p:0.7,tue:'Deload. Fast bar, easy sets. This is where the wave lands.'},
+ '2027-02-08':{tpl:'S',wave:'wave 2 week 1',sr:'4×5',p:0.75,add:2.5,fri:'heavy'},
+ '2027-02-15':{tpl:'S',wave:'wave 2 week 2',sr:'4×4',p:0.8,add:2.5},
+ '2027-02-22':{tpl:'S',wave:'wave 2 week 3',sr:'4×3',p:0.85,add:2.5},
+ '2027-03-01':{tpl:'S',wave:'wave 2 deload',sr:'3×3',p:0.7,add:2.5,tue:'Deload.'},
+ '2027-03-08':{tpl:'S',wave:'wave 3 week 1',sr:'4×5',p:0.75,add:5,fri:'heavy'},
+ '2027-03-15':{tpl:'S',wave:'wave 3 week 2',sr:'4×4',p:0.8,add:5},
+ '2027-03-22':{tpl:'S',wave:'wave 3 week 3',sr:'4×3',p:0.85,add:5,fri:'heavy',friNote:'Last heavy session before the re-test next week. Then three easy days.'},
+};
+
+function mondayOf(d){const x=addDays(d,0);const wd=(x.getDay()+6)%7;return addDays(x,-wd);}
+
+function sessionFor(d){
+ const k=key(d);
+ if(O[k])return O[k];
+ const g=GAMES[k];
+ if(g)return S.game(g);
+ const w=W[key(mondayOf(d))];
+ if(!w){return S.off();}
+ const wd=d.getDay();
+ if(w.tpl==='S'){
+  if(wd===1)return S.recovery();
+  if(wd===2)return S.strengthS(w.wave,w.sr,sq(w.p,w.add),pctL(w.p)+(w.add?', wave +'+w.add:''),w.tue);
+  if(wd===3)return S.powerS();
+  if(wd===4)return S.basketball();
+  if(wd===5)return w.fri==='heavy'?S.heavyFriS(w.friNote):S.primer(w.friNote);
+  return S.off(wd===6?'Day before the game.':'No game. Full rest.');
+ }
+ const free=w.tpl==='F';
+ if(wd===1)return S.recovery();
+ if(wd===2)return S.strengthG(w.sr,sq(w.p),pctL(w.p),w.tue);
+ if(wd===3)return S.powerG(free);
+ if(wd===4)return S.basketball();
+ if(wd===5){
+  if(w.fri==='tib')return S.tibOnly(w.friNote);
+  return free?S.heavyFri(w.friNote):S.primer(w.friNote);
+ }
+ if(wd===6)return S.off(free?'':'Day before the game.');
+ return S.off('No game this weekend. Full rest.');
+}
+
+const TAG={off:'Off',recovery:'Recov',strength:'Lift',power:'Power',plyo:'Plyo',basketball:'Ball',primer:'Primer',game:'Game',sprints:'Sprint',bodyweight:'BW',run:'Run',test:'Test',travel:'Travel'};
+const CHIP={off:'Off',recovery:'Recovery',strength:'Strength',power:'Power',plyo:'Plyometrics',basketball:'Basketball',primer:'Primer',game:'Game day',sprints:'Sprints',bodyweight:'Bodyweight',run:'Easy run',test:'Test day',travel:'Travel'};
+
+// ---------- state and rendering ----------
+const today=(()=>{const n=new Date();return D(n.getFullYear(),n.getMonth()+1,n.getDate());})();
+const clamp=d=>d<START?START:(d>END?END:d);
+let cur=clamp(today);
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function weekLabel(d){
+ const p=phaseOf(d);
+ if(p.id==='A'){const wk=Math.floor((d-D(2026,8,31))/(7*864e5))+5;return p.name+', week '+wk+' of 8';}
+ if(p.id==='G'){const w=W[key(mondayOf(d))];return p.name+(w&&w.wave?', '+w.wave:'');}
+ return p.name;
+}
+
+function renderRows(rows){
+ return rows.map(r=>'<div class="row"><div class="ex">'+esc(r[0])+'</div><div><div class="rx">'+esc(r[1])+'</div>'+(r[2]?'<div class="ld">'+esc(r[2])+'</div>':'')+'</div>'+(r[3]?'<div class="nt">'+esc(r[3])+'</div>':'')+'</div>').join('');
+}
+
+function render(){
+ const s=sessionFor(cur);
+ $('who').textContent='Drini, 191 cm, squat 1RM '+MAX.s+' kg, deadlift 1RM '+MAX.d+' kg';
+ $('phaseLine').textContent=weekLabel(cur);
+ $('wdayLine').textContent=WD[cur.getDay()]+(key(cur)===key(today)?', today':'');
+ $('dateLine').innerHTML=cur.getDate()+' '+MON[cur.getMonth()]+'<small>'+cur.getFullYear()+'</small>';
+ const chipCls=s.type==='game'?' game':(s.type==='off'||s.type==='recovery'||s.type==='run'?' off':(s.type==='travel'?' travel':''));
+ $('chip').innerHTML='<span class="chip'+chipCls+'">'+esc(CHIP[s.type]||s.type)+'</span>';
+ $('datePick').value=key(cur);
+
+ // week strip
+ const mon=mondayOf(cur);let h='';
+ for(let i=0;i<7;i++){
+  const d=addDays(mon,i);const inRange=d>=START&&d<=END;const ss=inRange?sessionFor(d):null;
+  const cls=['wd',ss&&ss.type==='game'?'game':'',key(d)===key(cur)?'sel':'',key(d)===key(today)?'today':''].filter(Boolean).join(' ');
+  h+='<button class="'+cls+'" data-k="'+key(d)+'" '+(inRange?'':'disabled')+' aria-label="'+WD[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()]+'"><span class="l">'+WDS[d.getDay()]+'</span><span class="n">'+d.getDate()+'</span><span class="t">'+(ss?TAG[ss.type]:'')+'</span></button>';
+ }
+ $('week').innerHTML=h;
+ $('week').querySelectorAll('button[data-k]').forEach(b=>b.addEventListener('click',()=>{cur=parse(b.dataset.k);render();}));
+
+ // card
+ const cardCls='card'+(s.type==='game'?' game':(s.type==='off'||s.type==='run'?' off':(s.type==='travel'?' travel':'')));
+ let c='<div class="'+cardCls+'"><h2>'+esc(s.title)+'</h2>';
+ if(s.game){
+  const g=s.game;
+  c+='<div class="gameline"><b>'+(g.ha?g.ha+' v ':'v ')+esc(g.opp)+'</b>'+esc([g.time,g.venue].filter(Boolean).join(', '))+(g.missed?' <span class="missed">Missed, you are away.</span>':'')+'</div>';
+ } else if(s.meta){c+='<div class="meta">'+esc(s.meta)+'</div>';}
+ (s.blocks||[]).forEach(b=>{
+  if(b.collapsed){c+='<details class="block"><summary>'+esc(b.title)+'</summary>'+renderRows(b.rows)+'</details>';}
+  else{c+='<div class="block"><h3>'+esc(b.title)+'</h3>'+renderRows(b.rows)+'</div>';}
+ });
+ if(s.notes&&s.notes.length){c+='<div class="notes">'+s.notes.map(n=>'<p>'+esc(n)+'</p>').join('')+'</div>';}
+ c+='</div>';
+ $('card').innerHTML=c;
+
+ $('prevBtn').disabled=key(cur)===key(START);
+ $('nextBtn').disabled=key(cur)===key(END);
+ loadLogInputs();
+ window.scrollTo({top:0});
+}
+
+// ---------- storage: Claude's storage inside Claude, the browser's own storage on a hosted copy, memory otherwise ----------
+const MEM={};
+const store={
+ async get(k){
+  if(typeof window.storage!=='undefined'){try{const r=await window.storage.get(k,false);return r?r.value:null;}catch(e){return null;}}
+  try{return localStorage.getItem(k);}catch(e){return MEM[k]||null;}
+ },
+ async set(k,v){
+  if(typeof window.storage!=='undefined'){try{const r=await window.storage.set(k,v,false);return !!r;}catch(e){return false;}}
+  try{localStorage.setItem(k,v);return true;}catch(e){MEM[k]=v;return false;}
+ }
+};
+const KEEP_HINT='Saved for this session only. Open it inside Claude, or from a home-screen bookmark of a hosted copy, to keep it.';
+let LOG={};
+async function loadLog(){
+ try{const v=await store.get('jumplog');if(v){LOG=JSON.parse(v);}}catch(e){}
+ try{const v=await store.get('maxes');if(v){const m=JSON.parse(v);if(m.s)MAX.s=m.s;if(m.d)MAX.d=m.d;}}catch(e){}
+ $('s1rm').value=MAX.s;$('d1rm').value=MAX.d;
+ render();renderLogList();
+}
+async function saveMax(){
+ const sv=Number($('s1rm').value),dv=Number($('d1rm').value);
+ if(!(sv>0&&dv>0)){$('maxStatus').textContent='Enter both numbers.';return;}
+ MAX.s=sv;MAX.d=dv;
+ const ok=await store.set('maxes',JSON.stringify({s:sv,d:dv}));
+ $('maxStatus').textContent=ok?'Saved. Loads recalculated.':'Loads recalculated. '+KEEP_HINT;
+ render();
+}
+function loadLogInputs(){
+ const e=LOG[key(cur)]||{};
+ $('chalk').value=e.chalk!=null?e.chalk:'';$('squat').value=e.squat!=null?e.squat:'';$('bw').value=e.bw!=null?e.bw:'';
+ $('logStatus').textContent=(e.chalk!=null||e.squat!=null||e.bw!=null)?'Saved for this day.':'';
+}
+async function saveLog(){
+ const e={};
+ if($('chalk').value!=='')e.chalk=Number($('chalk').value);
+ if($('squat').value!=='')e.squat=Number($('squat').value);
+ if($('bw').value!=='')e.bw=Number($('bw').value);
+ if(Object.keys(e).length)LOG[key(cur)]=e;else delete LOG[key(cur)];
+ const ok=await store.set('jumplog',JSON.stringify(LOG));
+ $('logStatus').textContent=ok?'Saved.':KEEP_HINT;
+ renderLogList();
+}
+function renderLogList(){
+ const ks=Object.keys(LOG).sort();
+ if(!ks.length){$('logList').textContent='Nothing saved yet.';return;}
+ $('logList').innerHTML='<table><tr><th>Date</th><th>Chalk, cm</th><th>Squat, kg</th><th>Bodyweight</th></tr>'+ks.map(k=>{const e=LOG[k];const d=parse(k);return '<tr><td class="d">'+d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear()+'</td><td>'+(e.chalk!=null?e.chalk:'')+'</td><td>'+(e.squat!=null?e.squat:'')+'</td><td>'+(e.bw!=null?e.bw:'')+'</td></tr>';}).join('')+'</table>';
+}
+
+// ---------- wiring ----------
+$('prevBtn').addEventListener('click',()=>{cur=clamp(addDays(cur,-1));render();});
+$('nextBtn').addEventListener('click',()=>{cur=clamp(addDays(cur,1));render();});
+$('todayBtn').addEventListener('click',()=>{cur=clamp(today);render();});
+const goPick=()=>{const v=$('datePick').value;if(v){cur=clamp(parse(v));render();}};
+$('datePick').addEventListener('change',goPick);
+$('datePick').addEventListener('input',goPick);
+$('datePick').addEventListener('blur',goPick);
+$('goBtn').addEventListener('click',goPick);
+$('saveBtn').addEventListener('click',saveLog);
+$('saveMax').addEventListener('click',saveMax);
+$('copyLog').addEventListener('click',async()=>{
+ const ks=Object.keys(LOG).sort();
+ const txt=ks.length?ks.map(k=>{const e=LOG[k];const d=parse(k);const parts=[];if(e.chalk!=null)parts.push('chalk '+e.chalk+' cm');if(e.squat!=null)parts.push('squat '+e.squat+' kg');if(e.bw!=null)parts.push('bodyweight '+e.bw+' kg');return d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear()+': '+parts.join(', ');}).join('\n')+'\nMaxes: squat '+MAX.s+' kg, deadlift '+MAX.d+' kg':'No entries yet.';
+ try{await navigator.clipboard.writeText(txt);$('copyStatus').textContent='Copied. Paste it into the chat.';}
+ catch(e){const t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();try{document.execCommand('copy');$('copyStatus').textContent='Copied. Paste it into the chat.';}catch(e2){$('copyStatus').textContent='Could not copy. Select the table above instead.';}document.body.removeChild(t);}
+});
+$('planBtn').addEventListener('click',()=>{$('overlay').classList.add('open');$('overlay').setAttribute('aria-hidden','false');renderLogList();});
+$('closePlan').addEventListener('click',()=>{$('overlay').classList.remove('open');$('overlay').setAttribute('aria-hidden','true');});
+document.addEventListener('keydown',e=>{if(e.target.tagName==='INPUT')return;if(e.key==='ArrowLeft')$('prevBtn').click();if(e.key==='ArrowRight')$('nextBtn').click();if(e.key==='Escape')$('closePlan').click();});
+
+render();
+loadLog();
+})();
+</script>
+</body>
+</html>
